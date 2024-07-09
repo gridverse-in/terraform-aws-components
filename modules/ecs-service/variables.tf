@@ -205,16 +205,70 @@ variable "task_policy_arns" {
   ]
 }
 
+variable "authentication_type" {
+  type        = string
+  default     = ""
+  description = "Authentication type. Supported values are `COGNITO` and `OIDC`"
+}
+
 variable "unauthenticated_paths" {
   type        = list(string)
   description = "Unauthenticated path pattern to match"
   default     = []
 }
 
+variable "authenticated_paths" {
+  type        = list(string)
+  default     = []
+  description = "Authenticated path pattern to match (a maximum of 1 can be defined)"
+}
+
 variable "unauthenticated_priority" {
   type        = string
   description = "The priority for the rules without authentication, between 1 and 50000 (1 being highest priority). Must be different from `authenticated_priority` since a listener can't have multiple rules with the same priority	"
   default     = 0
+}
+
+variable "authenticated_priority" {
+  type        = number
+  default     = null
+  description = "The priority for the rules with authentication, between 1 and 50000 (1 being highest priority). Must be different from `unauthenticated_priority` since a listener can't have multiple rules with the same priority"
+}
+
+variable "authentication_cognito_user_pool_arn" {
+  type        = string
+  description = "Cognito User Pool ARN"
+  default     = ""
+}
+
+variable "authentication_cognito_user_pool_client_id" {
+  type        = string
+  description = "Cognito User Pool Client ID"
+  default     = ""
+}
+
+variable "authentication_cognito_user_pool_domain" {
+  type        = string
+  description = "Cognito User Pool Domain. The User Pool Domain should be set to the domain prefix (`xxx`) instead of full domain (https://xxx.auth.us-west-2.amazoncognito.com)"
+  default     = ""
+}
+
+variable "authentication_cognito_scope" {
+  type        = string
+  description = "Cognito scope, which should be a space separated string of requested scopes (see https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims)"
+  default     = null
+}
+
+variable "authentication_cognito_on_unauthenticated_request" {
+  type        = string
+  description = "Cognito unauthenticated behavior, deny, allow, or authenticate"
+  default     = "authenticate"
+}
+
+variable "authentication_cognito_request_extra_params" {
+  type        = map(string)
+  description = "Cognito query parameters to include in redirect request"
+  default     = null
 }
 
 variable "task_enabled" {

@@ -347,6 +347,21 @@ module "alb_ingress" {
   count = local.is_alb ? 1 : 0
 
   vpc_id                        = local.vpc_id
+
+  authenticated_listener_arns = [local.lb_listener_https_arn]
+  unauthenticated_hosts = var.lb_catch_all ? [format("*.%s", var.vanity_domain), local.full_domain] : concat([
+    local.full_domain
+  ], var.vanity_alias, var.additional_targets)
+  authenticated_paths = var.authenticated_paths
+  authenticated_priority = var.authenticated_priority
+  authentication_type = var.authentication_type
+  authentication_cognito_on_unauthenticated_request = var.authentication_cognito_on_unauthenticated_request
+  authentication_cognito_request_extra_params = var.authentication_cognito_request_extra_params
+  authentication_cognito_scope = var.authentication_cognito_scope
+  authentication_cognito_user_pool_arn = var.authentication_cognito_user_pool_arn
+  authentication_cognito_user_pool_client_id = var.authentication_cognito_user_pool_client_id
+  authentication_cognito_user_pool_domain = var.authentication_cognito_user_pool_domain
+
   unauthenticated_listener_arns = [local.lb_listener_https_arn]
   unauthenticated_hosts = var.lb_catch_all ? [format("*.%s", var.vanity_domain), local.full_domain] : concat([
     local.full_domain
