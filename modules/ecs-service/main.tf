@@ -349,7 +349,7 @@ module "alb_ingress" {
   vpc_id                        = local.vpc_id
 
   authenticated_listener_arns = [local.lb_listener_https_arn]
-  authenticated_hosts = concat([format("*.%s", var.vanity_domain), local.full_domain], var.vanity_alias, var.additional_targets)
+  authenticated_hosts = concat([local.full_domain], var.vanity_alias, var.additional_targets)
   authenticated_paths = var.authenticated_paths
   authenticated_priority = var.authenticated_priority
   authentication_type = var.authentication_type
