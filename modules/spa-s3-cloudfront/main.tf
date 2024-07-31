@@ -137,8 +137,9 @@ module "spa_web" {
     failover_criteria  = var.failover_criteria_status_codes
   }] : []
 
-  s3_object_ownership = local.s3_object_ownership
-  s3_origins          = local.s3_origins
+  s3_object_ownership  = local.s3_object_ownership
+  s3_origins           = local.s3_origins
+  cors_allowed_origins = var.cors_allowed_origins
 
   context = module.this.context
 }

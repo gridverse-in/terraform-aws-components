@@ -405,6 +405,12 @@ variable "failover_s3_origin_environment" {
   default     = null
 }
 
+variable "cors_allowed_origins" {
+  type        = list(string)
+  default     = []
+  description = "List of allowed origins (e.g. example.com, test.com) for S3 bucket"
+}
+
 variable "forward_cookies" {
   type        = string
   default     = "none"
