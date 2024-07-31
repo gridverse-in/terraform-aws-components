@@ -206,6 +206,13 @@ variable "cloudfront_custom_error_response" {
   default     = []
 }
 
+variable "cloudfront_access_logging_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable or disable CloudFront Access Logging."
+
+}
+
 variable "cloudfront_access_log_create_bucket" {
   type        = bool
   default     = true

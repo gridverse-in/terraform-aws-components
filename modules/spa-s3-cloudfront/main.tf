@@ -85,6 +85,7 @@ module "spa_web" {
   versioning_enabled                 = var.origin_versioning_enabled
   web_acl_id                         = local.aws_waf_enabled ? module.waf.outputs.acl.arn : null
 
+  cloudfront_access_logging_enabled   = var.cloudfront_access_logging_enabled
   cloudfront_access_log_create_bucket = var.cloudfront_access_log_create_bucket
   cloudfront_access_log_bucket_name   = local.cloudfront_access_log_bucket_name
   cloudfront_access_log_prefix        = local.cloudfront_access_log_prefix
