@@ -3,6 +3,28 @@ variable "region" {
   description = "AWS Region"
 }
 
+variable "account_map_environment_name" {
+  type        = string
+  description = "The name of the environment where `account_map` is provisioned"
+  default     = "gbl"
+}
+
+variable "account_map_stage_name" {
+  type        = string
+  description = "The name of the stage where `account_map` is provisioned"
+  default     = "root"
+}
+
+variable "account_map_tenant_name" {
+  type        = string
+  description = <<-EOT
+  The name of the tenant where `account_map` is provisioned.
+
+  If the `tenant` label is not used, leave this as `null`.
+  EOT
+  default     = null
+}
+
 variable "availability_zones" {
   type        = list(string)
   description = <<-EOT
@@ -245,4 +267,9 @@ variable "subnets_per_az_names" {
   EOT
   default     = ["common"]
   nullable    = false
+}
+
+variable "shared_with_accounts" {
+  type        = set(string)
+  description = "Accounts with which VPC should be shared"
 }
