@@ -1,5 +1,14 @@
 locals {
   enable_resource_share = local.enabled && length(var.shared_with_accounts) > 0
+
+
+  public_subnet_arns_map = {
+    for idx, arn in tolist(module.subnets.public_subnet_arns) : idx => arn
+  }
+
+  private_subnet_arns_map = {
+    for idx, arn in tolist(module.subnets.private_subnet_arns) : idx => arn
+  }
 }
 
 # Resource Access Manager (RAM) share for the subnets
@@ -12,14 +21,14 @@ resource "aws_ram_resource_share" "default" {
 }
 
 resource "aws_ram_resource_association" "public_subnets" {
-  for_each           = local.enable_resource_share ? toset(module.subnets.public_subnet_arns) : []
-  resource_arn       = each.key
+  for_each           = local.enable_resource_share ? local.public_subnet_arns_map : {}
+  resource_arn       = each.value
   resource_share_arn = aws_ram_resource_share.default[0].id
 }
 
 resource "aws_ram_resource_association" "private_subnets" {
-  for_each           = local.enable_resource_share ? toset(module.subnets.private_subnet_arns) : []
-  resource_arn       = each.key
+  for_each           = local.enable_resource_share ? local.private_subnet_arns_map : {}
+  resource_arn       = each.value
   resource_share_arn = aws_ram_resource_share.default[0].id
 }
 
