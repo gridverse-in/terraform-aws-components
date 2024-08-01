@@ -12,13 +12,13 @@ resource "aws_ram_resource_share" "default" {
 }
 
 resource "aws_ram_resource_association" "public_subnets" {
-  for_each           = local.enable_resource_share ? module.subnets.public_subnet_arns : []
+  for_each           = local.enable_resource_share ? toset(module.subnets.public_subnet_arns) : []
   resource_arn       = each.value
   resource_share_arn = aws_ram_resource_share.default[0].id
 }
 
 resource "aws_ram_resource_association" "private_subnets" {
-  for_each           = local.enable_resource_share ? module.subnets.private_subnet_arns : []
+  for_each           = local.enable_resource_share ? toset(module.subnets.private_subnet_arns) : []
   resource_arn       = each.value
   resource_share_arn = aws_ram_resource_share.default[0].id
 }
