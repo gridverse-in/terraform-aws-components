@@ -3,8 +3,30 @@ variable "region" {
   description = "AWS Region"
 }
 
+variable "account_map_environment_name" {
+  type        = string
+  description = "The name of the environment where `account_map` is provisioned"
+  default     = "gbl"
+}
+
+variable "account_map_stage_name" {
+  type        = string
+  description = "The name of the stage where `account_map` is provisioned"
+  default     = "root"
+}
+
+variable "account_map_tenant_name" {
+  type        = string
+  description = <<-EOT
+  The name of the tenant where `account_map` is provisioned.
+
+  If the `tenant` label is not used, leave this as `null`.
+  EOT
+  default     = null
+}
+
 variable "availability_zones" {
-  type        = list(string)
+  type = list(string)
   description = <<-EOT
     List of Availability Zones (AZs) where subnets will be created. Ignored when `availability_zone_ids` is set.
     Can be the full name, e.g. `us-east-1a`, or just the part after the region, e.g. `a` to allow reusable values across regions.
@@ -14,18 +36,18 @@ variable "availability_zones" {
     will be truncated. We recommend setting `availability_zones` and `max_subnet_count` explicitly as constant
     (not computed) values for predictability, consistency, and stability.
     EOT
-  default     = []
+  default = []
 }
 
 variable "availability_zone_ids" {
-  type        = list(string)
+  type = list(string)
   description = <<-EOT
     List of Availability Zones IDs where subnets will be created. Overrides `availability_zones`.
     Can be the full name, e.g. `use1-az1`, or just the part after the AZ ID region code, e.g. `-az1`,
     to allow reusable values across regions. Consider contention for resources and spot pricing in each AZ when selecting.
     Useful in some regions when using only some AZs and you want to use the same ones across multiple accounts.
     EOT
-  default     = []
+  default = []
 }
 
 variable "ipv4_primary_cidr_block" {
@@ -61,7 +83,7 @@ variable "ipv4_additional_cidr_block_associations" {
     `ipv4_cidr_block` can be set explicitly, or set to `null` with the CIDR block derived from `ipv4_ipam_pool_id` using `ipv4_netmask_length`.
     Map keys must be known at `plan` time, and are only used to track changes.
     EOT
-  default     = {}
+  default = {}
 }
 
 variable "ipv4_cidr_block_association_timeouts" {
@@ -76,13 +98,13 @@ variable "ipv4_cidr_block_association_timeouts" {
 variable "ipv4_cidrs" {
   type = list(object({
     private = list(string)
-    public  = list(string)
+    public = list(string)
   }))
   description = <<-EOT
     Lists of CIDRs to assign to subnets. Order of CIDRs in the lists must not change over time.
     Lists may contain more CIDRs than needed.
     EOT
-  default     = []
+  default = []
   validation {
     condition     = length(var.ipv4_cidrs) < 2
     error_message = "Only 1 ipv4_cidrs object can be provided. Lists of CIDRs are passed via the `public` and `private` attributes of the single object."
@@ -123,14 +145,14 @@ variable "nat_instance_type" {
 }
 
 variable "nat_instance_ami_id" {
-  type        = list(string)
+  type = list(string)
   description = <<-EOT
     A list optionally containing the ID of the AMI to use for the NAT instance.
     If the list is empty (the default), the latest official AWS NAT instance AMI
     will be used. NOTE: The Official NAT instance AMI is being phased out and
     does not support NAT64. Use of a NAT gateway is recommended instead.
     EOT
-  default     = []
+  default = []
 }
 
 variable "map_public_ip_on_launch" {
@@ -145,7 +167,7 @@ variable "subnet_type_tag_key" {
 }
 
 variable "max_nats" {
-  type        = number
+  type     = number
   description = <<-EOT
     Upper limit on number of NAT Gateways/Instances to create.
     Set to 1 or 2 for cost savings at the expense of availability.
@@ -209,15 +231,15 @@ variable "nat_eip_aws_shield_protection_enabled" {
 }
 
 variable "gateway_vpc_endpoints" {
-  type        = set(string)
+  type = set(string)
   description = "A list of Gateway VPC Endpoints to provision into the VPC. Only valid values are \"dynamodb\" and \"s3\"."
-  default     = []
+  default = []
 }
 
 variable "interface_vpc_endpoints" {
-  type        = set(string)
+  type = set(string)
   description = "A list of Interface VPC Endpoints to provision into the VPC."
-  default     = []
+  default = []
 }
 
 variable "subnets_per_az_count" {
@@ -228,7 +250,7 @@ variable "subnets_per_az_count" {
   default     = 1
   nullable    = false
   validation {
-    condition = var.subnets_per_az_count > 0
+    condition     = var.subnets_per_az_count > 0
     # Validation error messages must be on a single line, among other restrictions.
     # See https://github.com/hashicorp/terraform/issues/24123
     error_message = "The `subnets_per_az` value must be greater than 0."
@@ -236,13 +258,19 @@ variable "subnets_per_az_count" {
 }
 
 variable "subnets_per_az_names" {
-  type        = list(string)
+  type = list(string)
   description = <<-EOT
     The subnet names of each type (public or private) to provision per Availability Zone.
     This variable is optional.
     If a list of names is provided, the list items will be used as keys in the outputs `named_private_subnets_map`, `named_public_subnets_map`,
     `named_private_route_table_ids_map` and `named_public_route_table_ids_map`
   EOT
-  default     = ["common"]
+  default = ["common"]
   nullable    = false
+}
+
+variable "shared_with_accounts" {
+  type = set(string)
+  description = "Accounts with which VPC should be shared"
+  default = []
 }
